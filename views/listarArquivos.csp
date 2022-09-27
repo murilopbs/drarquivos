@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+    <%inc #include <filesystem> 
+          #include <string>
+          #include <regex>
+    %>
+
+    <%c++
+        std::vector<std::string> listaDiretorios;
+        std::vector<std::string> listaArquivos;
+        for(const auto & entry: std::filesystem::directory_iterator(std::filesystem::current_path())){
+            entry.is_directory() ? listaDiretorios.push_back(entry.path()) : listaArquivos.push_back(entry.path());
+        }
+    %>
+    <head>
+        <meta charset="UTF-8">
+        <title> Sistema de Arquivos</title>
+        <script type="text/javascript">
+            function alerta(caminho){
+                window.location.replace("http://127.0.0.1:5055/baixarArquivo/" + caminho);
+            }
+        </script>
+    </head>
+    <body>
+        <%c++ if(listaArquivos.size() > 0){ %>
+            <table>
+                <tr>
+                    <th>
+                        Nome
+                    </th>
+                    <th>
+                        Tipo
+                    </th>
+                </tr>
+                <%c++ for(int i = 0; i < listaDiretorios.size(); i++){ %>
+                    <tr>
+                        <td>
+                            {%  listaDiretorios[i] %}
+                        </td>
+                        <td>
+                            Diretório
+                        </td>
+                        <td>
+                            Entrar
+                        </td>
+                    </tr>
+                <%c++ } %>
+                <%c++ for(int i = 0; i < listaArquivos.size(); i++){ %>
+                    <tr>
+                            <td>
+                                {%  listaArquivos[i] %}
+                            </td>
+                            <td>
+                                Arquivo
+                            </td>
+                            <td>
+                                <button type="buttom" onClick="alerta('{% std::regex_replace(listaArquivos[i], std::regex("/"), "@") %}')">
+                                    Baixar
+                                </button>
+                            </td>
+                    </tr>
+                <%c++ } %>
+            </table>
+        <%c++ } %>
+    </body>
+</html>
